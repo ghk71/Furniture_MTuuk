@@ -1,0 +1,74 @@
+[
+  {
+    "set_id": "square_6",
+    "shape": "square",
+    "n_items": 6,
+    "label_A": "rlss",
+    "label_B": "oidppo",
+    "label_C": "sac",
+    "label_D": "mh"
+  },
+  {
+    "set_id": "square_8",
+    "shape": "square",
+    "n_items": 8,
+    "label_A": "oidppo",
+    "label_B": "mh",
+    "label_C": "sac",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "rectangle_6",
+    "shape": "rectangle",
+    "n_items": 6,
+    "label_A": "sac",
+    "label_B": "mh",
+    "label_C": "rlss",
+    "label_D": "oidppo"
+  },
+  {
+    "set_id": "rectangle_8",
+    "shape": "rectangle",
+    "n_items": 8,
+    "label_A": "sac",
+    "label_B": "mh",
+    "label_C": "rlss",
+    "label_D": "oidppo"
+  },
+  {
+    "set_id": "l_shape_6",
+    "shape": "l_shape",
+    "n_items": 6,
+    "label_A": "sac",
+    "label_B": "rlss",
+    "label_C": "oidppo",
+    "label_D": "mh"
+  },
+  {
+    "set_id": "l_shape_8",
+    "shape": "l_shape",
+    "n_items": 8,
+    "label_A": "oidppo",
+    "label_B": "mh",
+    "label_C": "sac",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "u_shape_6",
+    "shape": "u_shape",
+    "n_items": 6,
+    "label_A": "mh",
+    "label_B": "oidppo",
+    "label_C": "rlss",
+    "label_D": "sac"
+  },
+  {
+    "set_id": "u_shape_8",
+    "shape": "u_shape",
+    "n_items": 8,
+    "label_A": "sac",
+    "label_B": "rlss",
+    "label_C": "oidppo",
+    "label_D": "mh"
+  }
+]
