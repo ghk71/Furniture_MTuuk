@@ -1,0 +1,308 @@
+<!-- MTurk HIT Template: Furniture Layout User Study -->
+<!-- Upload images to S3 and replace BASE_URL below -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #f8f9fa; }
+
+  .study-container { max-width: 960px; margin: 0 auto; padding: 20px; }
+
+  .header {
+    background: linear-gradient(135deg, #2C3E50, #3498DB);
+    color: white; padding: 24px 32px; border-radius: 12px; margin-bottom: 24px;
+  }
+  .header h1 { font-size: 22px; margin-bottom: 8px; }
+  .header p { font-size: 14px; opacity: 0.9; line-height: 1.5; }
+
+  .instructions {
+    background: #FFF3CD; border: 1px solid #FFECB5; border-radius: 10px;
+    padding: 16px 20px; margin-bottom: 24px; font-size: 13px; line-height: 1.6;
+  }
+  .instructions h3 { color: #856404; margin-bottom: 8px; }
+  .instructions ul { padding-left: 20px; }
+  .instructions li { margin-bottom: 4px; }
+
+  .question-set {
+    background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 24px; margin-bottom: 28px; border: 1px solid #e9ecef;
+  }
+
+  .set-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 2px solid #e9ecef;
+  }
+  .set-number {
+    background: #3498DB; color: white; width: 32px; height: 32px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .set-title { font-size: 16px; font-weight: 600; }
+  .set-desc { font-size: 12px; color: #6c757d; }
+
+  .layouts-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
+  }
+  .layout-card {
+    border: 2px solid #dee2e6; border-radius: 8px; overflow: hidden; text-align: center;
+    transition: border-color 0.2s;
+  }
+  .layout-card img { width: 100%; height: auto; display: block; }
+  .layout-label {
+    padding: 6px; font-weight: 700; font-size: 18px; background: #f8f9fa;
+    color: #2C3E50;
+  }
+
+  .question {
+    margin-bottom: 16px; padding: 12px 16px; background: #f8f9fa; border-radius: 8px;
+  }
+  .question-text {
+    font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #2C3E50;
+  }
+
+  .ranking-container { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rank-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .rank-label { font-size: 11px; font-weight: 600; color: #6c757d; }
+
+  .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
+  .radio-option {
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    padding: 6px 12px; border: 1px solid #dee2e6; border-radius: 6px;
+    transition: all 0.2s; font-size: 14px;
+  }
+  .radio-option:hover { border-color: #3498DB; background: #EBF5FB; }
+  .radio-option input[type="radio"] { cursor: pointer; }
+
+  select.rank-select {
+    padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 6px;
+    font-size: 14px; font-family: 'Inter', sans-serif; cursor: pointer;
+    background: white; min-width: 60px;
+  }
+  select.rank-select:focus { outline: none; border-color: #3498DB; }
+
+  .attention-check {
+    background: #FCE4EC; border: 1px solid #F8BBD0; border-radius: 10px;
+    padding: 16px 20px; margin-bottom: 24px;
+  }
+  .attention-check h3 { color: #C62828; margin-bottom: 8px; font-size: 14px; }
+
+  .submit-section { text-align: center; padding: 20px; }
+  .submit-btn {
+    background: #27AE60; color: white; border: none; padding: 14px 48px;
+    border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover { background: #219A52; }
+
+  .legend {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-color {
+    width: 14px; height: 14px; border-radius: 3px; border: 1px solid #ccc;
+  }
+
+  @media (max-width: 768px) {
+    .layouts-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script>
+  // BASE_URL: Replace with your S3 bucket URL where images are hosted
+  var BASE_URL = "images/"//"https://YOUR-S3-BUCKET.s3.amazonaws.com/user-study/";
+</script>
+
+<div class="study-container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🏠 Furniture Layout Evaluation Study</h1>
+    <p>
+      You will see 8 sets of room layouts. Each set shows 4 different furniture arrangements (A, B, C, D) for the same room.
+      For each set, please answer 2 simple questions. This should take about <strong>8-10 minutes</strong>.
+    </p>
+  </div>
+
+  <!-- Instructions -->
+  <div class="instructions">
+    <h3>📋 Instructions</h3>
+    <ul>
+      <li>Each image shows a <strong>top-down (bird's eye) view</strong> of a room with furniture placed inside.</li>
+      <li>The <strong>red line</strong> at the bottom indicates the <strong>door/entrance</strong>.</li>
+      <li>Colored rectangles represent different furniture items (bed, desk, sofa, etc.).</li>
+      <li>Consider: Can you easily walk to each piece of furniture? Are related items (e.g., desk & chair) placed together? Does the overall layout look balanced?</li>
+      <li>There are <strong>no right or wrong answers</strong> — we want your honest opinion.</li>
+    </ul>
+  </div>
+
+  <!-- Furniture Color Legend -->
+  <div class="question-set" style="padding: 12px 20px;">
+    <strong style="font-size: 13px;">Furniture Color Legend:</strong>
+    <div class="legend" style="margin-top: 8px; margin-bottom: 0;">
+      <div class="legend-item"><div class="legend-color" style="background:#6B8EC7"></div> Bed</div>
+      <div class="legend-item"><div class="legend-color" style="background:#C7956B"></div> Desk</div>
+      <div class="legend-item"><div class="legend-color" style="background:#8BC76B"></div> Chair</div>
+      <div class="legend-item"><div class="legend-color" style="background:#C76B8E"></div> Sofa</div>
+      <div class="legend-item"><div class="legend-color" style="background:#6BC7C0"></div> Nightstand</div>
+      <div class="legend-item"><div class="legend-color" style="background:#9B6BC7"></div> Bookshelf</div>
+      <div class="legend-item"><div class="legend-color" style="background:#C7A06B"></div> TV Stand</div>
+      <div class="legend-item"><div class="legend-color" style="background:#7B8BA0"></div> Wardrobe</div>
+      <div class="legend-item"><div class="legend-color" style="background:#D4A76A"></div> Coffee Table</div>
+    </div>
+  </div>
+
+  <form id="surveyForm">
+
+    <!-- ============================================================ -->
+    <!-- 8 Question Sets (generated dynamically or hardcoded) -->
+    <!-- ============================================================ -->
+
+    <script>
+    var SETS = [
+      {num: 1, id: "square_6", title: "Square Room — 6 Furniture Items", desc: "5m × 5m square room"},
+      {num: 2, id: "square_8", title: "Square Room — 8 Furniture Items", desc: "5m × 5m square room"},
+      {num: 3, id: "rectangle_6", title: "Rectangular Room — 6 Furniture Items", desc: "6.2m × 4m rectangular room"},
+      {num: 4, id: "rectangle_8", title: "Rectangular Room — 8 Furniture Items", desc: "6.2m × 4m rectangular room"},
+      {num: 5, id: "l_shape_6", title: "L-Shaped Room — 6 Furniture Items", desc: "L-shaped room (~25m²)"},
+      {num: 6, id: "l_shape_8", title: "L-Shaped Room — 8 Furniture Items", desc: "L-shaped room (~25m²)"},
+      {num: 7, id: "u_shape_6", title: "U-Shaped Room — 6 Furniture Items", desc: "U-shaped room (~25m²)"},
+      {num: 8, id: "u_shape_8", title: "U-Shaped Room — 8 Furniture Items", desc: "U-shaped room (~25m²)"},
+    ];
+
+    SETS.forEach(function(s) {
+      var html = `
+      <div class="question-set">
+        <div class="set-header">
+          <div class="set-number">${s.num}</div>
+          <div>
+            <div class="set-title">${s.title}</div>
+            <div class="set-desc">${s.desc}</div>
+          </div>
+        </div>
+
+        <div class="layouts-grid">
+          <div class="layout-card">
+            <img src="${BASE_URL}${s.id}_A.png" alt="Layout A">
+            <div class="layout-label">A</div>
+          </div>
+          <div class="layout-card">
+            <img src="${BASE_URL}${s.id}_B.png" alt="Layout B">
+            <div class="layout-label">B</div>
+          </div>
+          <div class="layout-card">
+            <img src="${BASE_URL}${s.id}_C.png" alt="Layout C">
+            <div class="layout-label">C</div>
+          </div>
+          <div class="layout-card">
+            <img src="${BASE_URL}${s.id}_D.png" alt="Layout D">
+            <div class="layout-label">D</div>
+          </div>
+        </div>
+
+        <!-- Q1: Overall Ranking -->
+        <div class="question">
+          <div class="question-text">Q1. Rank these layouts from best (1st) to worst (4th) — which room would you most want to live in?</div>
+          <div class="ranking-container">
+            <div class="rank-group">
+              <div class="rank-label">1st (Best)</div>
+              <select name="set${s.num}_rank1" class="rank-select" required>
+                <option value="">--</option>
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+              </select>
+            </div>
+            <div class="rank-group">
+              <div class="rank-label">2nd</div>
+              <select name="set${s.num}_rank2" class="rank-select" required>
+                <option value="">--</option>
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+              </select>
+            </div>
+            <div class="rank-group">
+              <div class="rank-label">3rd</div>
+              <select name="set${s.num}_rank3" class="rank-select" required>
+                <option value="">--</option>
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+              </select>
+            </div>
+            <div class="rank-group">
+              <div class="rank-label">4th (Worst)</div>
+              <select name="set${s.num}_rank4" class="rank-select" required>
+                <option value="">--</option>
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q2: Functional Preference -->
+        <div class="question">
+          <div class="question-text">Q2. Which layout makes it easiest to use the furniture? (e.g., clear pathways, desk near chair, bed accessible)</div>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="A" required> A</label>
+            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="B"> B</label>
+            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="C"> C</label>
+            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="D"> D</label>
+          </div>
+        </div>
+      </div>
+      `;
+      document.write(html);
+    });
+    </script>
+
+    <!-- Attention Check -->
+    <div class="attention-check">
+      <h3>⚠️ Attention Check</h3>
+      <p style="font-size: 13px; margin-bottom: 10px;">To verify you are paying attention, please select <strong>"C"</strong> below.</p>
+      <div class="radio-group">
+        <label class="radio-option"><input type="radio" name="attention" value="A" required> A</label>
+        <label class="radio-option"><input type="radio" name="attention" value="B"> B</label>
+        <label class="radio-option"><input type="radio" name="attention" value="C"> C</label>
+        <label class="radio-option"><input type="radio" name="attention" value="D"> D</label>
+      </div>
+    </div>
+
+    <!-- Optional Comment -->
+    <div class="question-set">
+      <div class="question-text" style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">
+        Any additional comments? (Optional)
+      </div>
+      <textarea name="comments" rows="3" style="width:100%; padding:8px; border:1px solid #dee2e6; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px;" placeholder="e.g., What factors did you consider when ranking?"></textarea>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Answers</button>
+    </div>
+  </form>
+</div>
+
+<script>
+// Validation: ensure no duplicate ranks within each set
+document.getElementById('surveyForm').addEventListener('submit', function(e) {
+  for (var s = 1; s <= 8; s++) {
+    var ranks = [];
+    for (var r = 1; r <= 4; r++) {
+      var val = document.querySelector('select[name="set' + s + '_rank' + r + '"]').value;
+      if (!val) { alert('Please complete all rankings for Set ' + s); e.preventDefault(); return; }
+      if (ranks.indexOf(val) !== -1) {
+        alert('Set ' + s + ': Each layout (A,B,C,D) must appear exactly once in the ranking. You have a duplicate: ' + val);
+        e.preventDefault(); return;
+      }
+      ranks.push(val);
+    }
+  }
+  // Attention check
+  var att = document.querySelector('input[name="attention"]:checked');
+  if (!att || att.value !== 'C') {
+    alert('Please check the attention question again.');
+    e.preventDefault(); return;
+  }
+});
+</script>
