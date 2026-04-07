@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Survey Responses</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f5f6f8;color:#1a1a2e;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-size:24px;margin-bottom:8px}
+.subtitle{color:#6c757d;font-size:14px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px;border:1px solid #e9ecef}
+.card h2{font-size:16px;margin-bottom:12px;color:#2C3E50}
+.btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:'Inter';margin-right:8px;margin-bottom:8px;transition:all .2s}
+.btn-primary{background:#3498DB;color:#fff}.btn-primary:hover{background:#2980B9}
+.btn-danger{background:#E74C3C;color:#fff}.btn-danger:hover{background:#C0392B}
+.btn-success{background:#27AE60;color:#fff}.btn-success:hover{background:#219A52}
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.stat{background:#f8f9fa;padding:16px 20px;border-radius:10px;text-align:center;min-width:120px;border:1px solid #e9ecef}
+.stat .num{font-size:28px;font-weight:700;color:#3498DB}
+.stat .label{font-size:12px;color:#6c757d;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+th{background:#f8f9fa;padding:8px 6px;text-align:left;border-bottom:2px solid #dee2e6;position:sticky;top:0}
+td{padding:6px;border-bottom:1px solid #f0f0f0}
+tr:hover td{background:#f8f9fa}
+.table-wrap{max-height:400px;overflow:auto;border:1px solid #e9ecef;border-radius:8px}
+.input-url{width:100%;padding:10px;border:2px solid #dee2e6;border-radius:8px;font-size:13px;font-family:'Inter'}
+.input-url:focus{outline:none;border-color:#3498DB}
+.note{font-size:12px;color:#888;margin-top:8px}
+#log{background:#1a1a2e;color:#2ECC71;padding:12px;border-radius:8px;font-family:monospace;font-size:12px;max-height:200px;overflow:auto;white-space:pre-wrap;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>&#128202; Survey Admin Dashboard</h1>
+  <p class="subtitle">View, download, and manage collected responses</p>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="num" id="totalCount">0</div><div class="label">Total Responses</div></div>
+    <div class="stat"><div class="num" id="validCount">0</div><div class="label">Valid (Attention ✓)</div></div>
+    <div class="stat"><div class="num" id="avgDuration">0</div><div class="label">Avg Duration (s)</div></div>
+  </div>
+
+  <!-- Google Sheets -->
+  <div class="card">
+    <h2>&#9729; Google Sheets Backend</h2>
+    <p style="font-size:13px;margin-bottom:12px">Enter your Google Apps Script URL to fetch responses from Google Sheets:</p>
+    <input type="text" class="input-url" id="scriptUrl" placeholder="https://script.google.com/macros/s/XXXX/exec">
+    <div style="margin-top:12px">
+      <button class="btn btn-primary" onclick="fetchFromSheets()">&#128229; Fetch from Google Sheets</button>
+    </div>
+    <p class="note">Responses will be merged with local data (deduplicated by participant_id).</p>
+  </div>
+
+  <!-- Local Storage -->
+  <div class="card">
+    <h2>&#128190; Local Storage</h2>
+    <button class="btn btn-primary" onclick="loadLocal()">&#128260; Load Local Responses</button>
+    <button class="btn btn-danger" onclick="clearLocal()">&#128465; Clear Local Storage</button>
+    <p class="note">Local responses are stored in this browser's localStorage.</p>
+  </div>
+
+  <!-- Download -->
+  <div class="card">
+    <h2>&#128196; Download</h2>
+    <button class="btn btn-success" onclick="downloadCSV('all')">&#11015; Download ALL as CSV</button>
+    <button class="btn btn-success" onclick="downloadCSV('valid')">&#11015; Download VALID only (Attention=C)</button>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <h2>&#128209; Response Table</h2>
+    <div class="table-wrap"><table id="dataTable"><thead><tr><th>Loading...</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <!-- Log -->
+  <div class="card">
+    <h2>&#128295; Log</h2>
+    <div id="log">Ready.\n</div>
+  </div>
+</div>
+
+<script>
+let allResponses = [];
+
+function log(msg) {
+  const el = document.getElementById('log');
+  el.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function updateStats() {
+  const total = allResponses.length;
+  const valid = allResponses.filter(r => r.attention === 'C').length;
+  const durations = allResponses.filter(r => r.duration_seconds).map(r => parseInt(r.duration_seconds));
+  const avg = durations.length ? Math.round(durations.reduce((a,b)=>a+b,0)/durations.length) : 0;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('validCount').textContent = valid;
+  document.getElementById('avgDuration').textContent = avg;
+}
+
+function renderTable() {
+  if (!allResponses.length) return;
+  const keys = ['participant_id','timestamp','duration_seconds','attention',
+    ...Array.from({length:8},(_,i)=>[`set${i+1}_rank1`,`set${i+1}_func`]).flat(),
+    'comments'];
+  const existingKeys = keys.filter(k => allResponses.some(r => r[k] !== undefined));
+
+  let html = '<tr>' + existingKeys.map(k => `<th>${k}</th>`).join('') + '</tr>';
+  const thead = document.querySelector('#dataTable thead');
+  thead.innerHTML = html;
+
+  const tbody = document.querySelector('#dataTable tbody');
+  tbody.innerHTML = allResponses.map(r => {
+    const attClass = r.attention === 'C' ? '' : 'style="background:#FFEBEE"';
+    return `<tr ${attClass}>` + existingKeys.map(k => `<td>${r[k]||''}</td>`).join('') + '</tr>';
+  }).join('');
+}
+
+function mergeResponses(newData) {
+  const existing = new Set(allResponses.map(r => r.participant_id));
+  let added = 0;
+  newData.forEach(r => {
+    if (!existing.has(r.participant_id)) {
+      allResponses.push(r);
+      existing.add(r.participant_id);
+      added++;
+    }
+  });
+  log(`Merged: ${added} new, ${newData.length - added} duplicates skipped. Total: ${allResponses.length}`);
+  updateStats();
+  renderTable();
+}
+
+function loadLocal() {
+  const stored = JSON.parse(localStorage.getItem('oidppo_responses') || '[]');
+  log(`Local storage: ${stored.length} responses found.`);
+  mergeResponses(stored);
+}
+
+function clearLocal() {
+  if (!confirm('Are you sure? This will delete all locally stored responses.')) return;
+  localStorage.removeItem('oidppo_responses');
+  log('Local storage cleared.');
+}
+
+async function fetchFromSheets() {
+  const url = document.getElementById('scriptUrl').value.trim();
+  if (!url) { alert('Please enter the Google Apps Script URL.'); return; }
+  log(`Fetching from: ${url}`);
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    log(`Fetched ${data.length} responses from Google Sheets.`);
+    mergeResponses(data);
+  } catch (err) {
+    log(`ERROR: ${err.message}`);
+    alert('Failed to fetch. Check the URL and ensure the script is deployed as "Anyone" access.');
+  }
+}
+
+function downloadCSV(mode) {
+  let data = allResponses;
+  if (mode === 'valid') data = data.filter(r => r.attention === 'C');
+  if (!data.length) { alert('No data to download.'); return; }
+
+  const allKeys = new Set();
+  data.forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
+  const headers = Array.from(allKeys);
+
+  let csv = headers.join(',') + '\n';
+  data.forEach(r => {
+    csv += headers.map(h => {
+      let v = String(r[h] || '');
+      if (v.includes(',') || v.includes('"') || v.includes('\n')) v = '"' + v.replace(/"/g,'""') + '"';
+      return v;
+    }).join(',') + '\n';
+  });
+
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `survey_responses_${mode}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  log(`Downloaded ${data.length} responses (${mode}).`);
+}
+
+// Auto-load local on page load
+loadLocal();
+</script>
+</body>
+</html>
