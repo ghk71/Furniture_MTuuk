@@ -1,133 +1,117 @@
-<!-- MTurk HIT Template: Furniture Layout User Study -->
-<!-- Upload images to S3 and replace BASE_URL below -->
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Furniture Layout Evaluation Study</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;color:#1a1a2e;background:#f5f6f8}
+.container{max-width:960px;margin:0 auto;padding:20px}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Header */
+.header{background:linear-gradient(135deg,#1a1a2e,#3498DB);color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:24px}
+.header h1{font-size:22px;margin-bottom:8px}
+.header p{font-size:14px;opacity:.9;line-height:1.6}
 
-  body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #f8f9fa; }
+/* Progress */
+.progress-bar{background:#e9ecef;border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,#3498DB,#2ECC71);height:100%;border-radius:20px;transition:width .4s ease}
+.progress-text{font-size:12px;color:#6c757d;margin-bottom:8px;text-align:right}
 
-  .study-container { max-width: 960px; margin: 0 auto; padding: 20px; }
+/* Instructions */
+.instructions{background:#FFF3CD;border:1px solid #FFECB5;border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:13px;line-height:1.6}
+.instructions h3{color:#856404;margin-bottom:8px}
+.instructions ul{padding-left:20px}
+.instructions li{margin-bottom:4px}
 
-  .header {
-    background: linear-gradient(135deg, #2C3E50, #3498DB);
-    color: white; padding: 24px 32px; border-radius: 12px; margin-bottom: 24px;
-  }
-  .header h1 { font-size: 22px; margin-bottom: 8px; }
-  .header p { font-size: 14px; opacity: 0.9; line-height: 1.5; }
+/* Legend */
+.legend-box{background:#fff;border:1px solid #e9ecef;border-radius:10px;padding:12px 20px;margin-bottom:24px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-color{width:14px;height:14px;border-radius:3px;border:1px solid #ccc}
 
-  .instructions {
-    background: #FFF3CD; border: 1px solid #FFECB5; border-radius: 10px;
-    padding: 16px 20px; margin-bottom: 24px; font-size: 13px; line-height: 1.6;
-  }
-  .instructions h3 { color: #856404; margin-bottom: 8px; }
-  .instructions ul { padding-left: 20px; }
-  .instructions li { margin-bottom: 4px; }
+/* Question Set */
+.question-set{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:24px;margin-bottom:28px;border:1px solid #e9ecef;display:none}
+.question-set.active{display:block}
+.set-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e9ecef}
+.set-number{background:#3498DB;color:#fff;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.set-title{font-size:16px;font-weight:600}
+.set-desc{font-size:12px;color:#6c757d}
 
-  .question-set {
-    background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    padding: 24px; margin-bottom: 28px; border: 1px solid #e9ecef;
-  }
+/* Layout Grid */
+.layouts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+@media(min-width:768px){.layouts-grid{grid-template-columns:repeat(4,1fr)}}
+.layout-card{border:3px solid #dee2e6;border-radius:10px;overflow:hidden;text-align:center;cursor:pointer;transition:all .2s}
+.layout-card:hover{border-color:#3498DB;transform:translateY(-2px);box-shadow:0 4px 12px rgba(52,152,219,.2)}
+.layout-card img{width:100%;height:auto;display:block}
+.layout-label{padding:8px;font-weight:700;font-size:18px;background:#f8f9fa;color:#2C3E50}
 
-  .set-header {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-    padding-bottom: 12px; border-bottom: 2px solid #e9ecef;
-  }
-  .set-number {
-    background: #3498DB; color: white; width: 32px; height: 32px;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px; flex-shrink: 0;
-  }
-  .set-title { font-size: 16px; font-weight: 600; }
-  .set-desc { font-size: 12px; color: #6c757d; }
+/* Questions */
+.question{margin-bottom:16px;padding:14px 18px;background:#f8f9fa;border-radius:10px}
+.question-text{font-size:14px;font-weight:600;margin-bottom:12px;color:#2C3E50}
 
-  .layouts-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
-  }
-  .layout-card {
-    border: 2px solid #dee2e6; border-radius: 8px; overflow: hidden; text-align: center;
-    transition: border-color 0.2s;
-  }
-  .layout-card img { width: 100%; height: auto; display: block; }
-  .layout-label {
-    padding: 6px; font-weight: 700; font-size: 18px; background: #f8f9fa;
-    color: #2C3E50;
-  }
+.ranking-container{display:flex;gap:10px;flex-wrap:wrap}
+.rank-group{display:flex;flex-direction:column;align-items:center;gap:5px}
+.rank-label{font-size:11px;font-weight:600;color:#6c757d}
+select.rank-select{padding:8px 12px;border:2px solid #dee2e6;border-radius:8px;font-size:15px;font-family:'Inter';cursor:pointer;background:#fff;min-width:65px;transition:border-color .2s}
+select.rank-select:focus{outline:none;border-color:#3498DB}
 
-  .question {
-    margin-bottom: 16px; padding: 12px 16px; background: #f8f9fa; border-radius: 8px;
-  }
-  .question-text {
-    font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #2C3E50;
-  }
+.radio-group{display:flex;gap:12px;flex-wrap:wrap}
+.radio-option{display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 16px;border:2px solid #dee2e6;border-radius:8px;transition:all .2s;font-size:14px;font-weight:500}
+.radio-option:hover{border-color:#3498DB;background:#EBF5FB}
+.radio-option.selected{border-color:#3498DB;background:#D6EAF8}
+.radio-option input[type="radio"]{cursor:pointer;accent-color:#3498DB}
 
-  .ranking-container { display: flex; gap: 8px; flex-wrap: wrap; }
-  .rank-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .rank-label { font-size: 11px; font-weight: 600; color: #6c757d; }
+/* Navigation */
+.nav-buttons{display:flex;justify-content:space-between;margin-top:20px}
+.btn{padding:12px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Inter'}
+.btn-prev{background:#e9ecef;color:#495057}
+.btn-prev:hover{background:#dee2e6}
+.btn-next{background:#3498DB;color:#fff}
+.btn-next:hover{background:#2980B9}
+.btn-submit{background:#27AE60;color:#fff;padding:14px 48px;font-size:16px}
+.btn-submit:hover{background:#219A52}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 
-  .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
-  .radio-option {
-    display: flex; align-items: center; gap: 6px; cursor: pointer;
-    padding: 6px 12px; border: 1px solid #dee2e6; border-radius: 6px;
-    transition: all 0.2s; font-size: 14px;
-  }
-  .radio-option:hover { border-color: #3498DB; background: #EBF5FB; }
-  .radio-option input[type="radio"] { cursor: pointer; }
+/* Attention check */
+.attention-check{background:#FCE4EC;border:1px solid #F8BBD0;border-radius:10px;padding:16px 20px;margin-bottom:20px}
+.attention-check h3{color:#C62828;margin-bottom:8px;font-size:14px}
 
-  select.rank-select {
-    padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 6px;
-    font-size: 14px; font-family: 'Inter', sans-serif; cursor: pointer;
-    background: white; min-width: 60px;
-  }
-  select.rank-select:focus { outline: none; border-color: #3498DB; }
+/* Thank you */
+.thank-you{text-align:center;padding:60px 20px;display:none}
+.thank-you h2{font-size:28px;color:#27AE60;margin-bottom:16px}
+.thank-you p{font-size:16px;color:#555;margin-bottom:24px}
+.thank-you .btn{display:inline-block}
 
-  .attention-check {
-    background: #FCE4EC; border: 1px solid #F8BBD0; border-radius: 10px;
-    padding: 16px 20px; margin-bottom: 24px;
-  }
-  .attention-check h3 { color: #C62828; margin-bottom: 8px; font-size: 14px; }
+/* Status messages */
+.status{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;display:none}
+.status.error{display:block;background:#FCE4EC;color:#C62828;border:1px solid #F8BBD0}
+.status.success{display:block;background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9}
 
-  .submit-section { text-align: center; padding: 20px; }
-  .submit-btn {
-    background: #27AE60; color: white; border: none; padding: 14px 48px;
-    border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
-    transition: background 0.2s;
-  }
-  .submit-btn:hover { background: #219A52; }
-
-  .legend {
-    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 4px; }
-  .legend-color {
-    width: 14px; height: 14px; border-radius: 3px; border: 1px solid #ccc;
-  }
-
-  @media (max-width: 768px) {
-    .layouts-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+/* Completion code */
+.completion-code{background:#E8F5E9;border:2px solid #A5D6A7;border-radius:10px;padding:20px;text-align:center;margin:20px 0}
+.completion-code .code{font-size:28px;font-weight:700;color:#2E7D32;letter-spacing:3px;margin:8px 0}
 </style>
+</head>
+<body>
 
-<script>
-  // BASE_URL: Replace with your S3 bucket URL where images are hosted
-  var BASE_URL = "images/"//"https://YOUR-S3-BUCKET.s3.amazonaws.com/user-study/";
-</script>
-
-<div class="study-container">
-
+<div class="container">
   <!-- Header -->
   <div class="header">
-    <h1>🏠 Furniture Layout Evaluation Study</h1>
-    <p>
-      You will see 8 sets of room layouts. Each set shows 4 different furniture arrangements (A, B, C, D) for the same room.
-      For each set, please answer 2 simple questions. This should take about <strong>8-10 minutes</strong>.
-    </p>
+    <h1>&#127968; Furniture Layout Evaluation Study</h1>
+    <p>You will see 8 sets of room layouts. Each set shows 4 different furniture arrangements (A, B, C, D) for the same room.
+    For each set, please answer 2 simple questions. This should take about <strong>8-10 minutes</strong>.</p>
   </div>
 
-  <!-- Instructions -->
-  <div class="instructions">
-    <h3>📋 Instructions</h3>
+  <!-- Progress -->
+  <div class="progress-text" id="progressText">Question 1 / 9</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:11%"></div></div>
+
+  <!-- Instructions (shown on first page) -->
+  <div class="instructions" id="instructionsBox">
+    <h3>&#128203; Instructions</h3>
     <ul>
       <li>Each image shows a <strong>top-down (bird's eye) view</strong> of a room with furniture placed inside.</li>
       <li>The <strong>red line</strong> at the bottom indicates the <strong>door/entrance</strong>.</li>
@@ -137,172 +121,341 @@
     </ul>
   </div>
 
-  <!-- Furniture Color Legend -->
-  <div class="question-set" style="padding: 12px 20px;">
-    <strong style="font-size: 13px;">Furniture Color Legend:</strong>
-    <div class="legend" style="margin-top: 8px; margin-bottom: 0;">
-      <div class="legend-item"><div class="legend-color" style="background:#6B8EC7"></div> Bed</div>
-      <div class="legend-item"><div class="legend-color" style="background:#C7956B"></div> Desk</div>
-      <div class="legend-item"><div class="legend-color" style="background:#8BC76B"></div> Chair</div>
-      <div class="legend-item"><div class="legend-color" style="background:#C76B8E"></div> Sofa</div>
-      <div class="legend-item"><div class="legend-color" style="background:#6BC7C0"></div> Nightstand</div>
-      <div class="legend-item"><div class="legend-color" style="background:#9B6BC7"></div> Bookshelf</div>
-      <div class="legend-item"><div class="legend-color" style="background:#C7A06B"></div> TV Stand</div>
-      <div class="legend-item"><div class="legend-color" style="background:#7B8BA0"></div> Wardrobe</div>
-      <div class="legend-item"><div class="legend-color" style="background:#D4A76A"></div> Coffee Table</div>
+  <!-- Legend -->
+  <div class="legend-box" id="legendBox">
+    <strong style="font-size:13px">Furniture Color Legend:</strong>
+    <div class="legend" style="margin-top:8px">
+      <div class="legend-item"><div class="legend-color" style="background:#6B8EC7"></div>Bed</div>
+      <div class="legend-item"><div class="legend-color" style="background:#C7956B"></div>Desk</div>
+      <div class="legend-item"><div class="legend-color" style="background:#8BC76B"></div>Chair</div>
+      <div class="legend-item"><div class="legend-color" style="background:#C76B8E"></div>Sofa</div>
+      <div class="legend-item"><div class="legend-color" style="background:#6BC7C0"></div>Nightstand</div>
+      <div class="legend-item"><div class="legend-color" style="background:#9B6BC7"></div>Bookshelf</div>
+      <div class="legend-item"><div class="legend-color" style="background:#C7A06B"></div>TV Stand</div>
+      <div class="legend-item"><div class="legend-color" style="background:#7B8BA0"></div>Wardrobe</div>
     </div>
   </div>
 
-  <form id="surveyForm">
+  <!-- Status message -->
+  <div class="status" id="statusMsg"></div>
 
-    <!-- ============================================================ -->
-    <!-- 8 Question Sets (generated dynamically or hardcoded) -->
-    <!-- ============================================================ -->
+  <!-- Survey Pages (generated by JS) -->
+  <div id="surveyPages"></div>
 
-    <script>
-    var SETS = [
-      {num: 1, id: "square_6", title: "Square Room — 6 Furniture Items", desc: "5m × 5m square room"},
-      {num: 2, id: "square_8", title: "Square Room — 8 Furniture Items", desc: "5m × 5m square room"},
-      {num: 3, id: "rectangle_6", title: "Rectangular Room — 6 Furniture Items", desc: "6.2m × 4m rectangular room"},
-      {num: 4, id: "rectangle_8", title: "Rectangular Room — 8 Furniture Items", desc: "6.2m × 4m rectangular room"},
-      {num: 5, id: "l_shape_6", title: "L-Shaped Room — 6 Furniture Items", desc: "L-shaped room (~25m²)"},
-      {num: 6, id: "l_shape_8", title: "L-Shaped Room — 8 Furniture Items", desc: "L-shaped room (~25m²)"},
-      {num: 7, id: "u_shape_6", title: "U-Shaped Room — 6 Furniture Items", desc: "U-shaped room (~25m²)"},
-      {num: 8, id: "u_shape_8", title: "U-Shaped Room — 8 Furniture Items", desc: "U-shaped room (~25m²)"},
-    ];
-
-    SETS.forEach(function(s) {
-      var html = `
-      <div class="question-set">
-        <div class="set-header">
-          <div class="set-number">${s.num}</div>
-          <div>
-            <div class="set-title">${s.title}</div>
-            <div class="set-desc">${s.desc}</div>
-          </div>
-        </div>
-
-        <div class="layouts-grid">
-          <div class="layout-card">
-            <img src="${BASE_URL}${s.id}_A.png" alt="Layout A">
-            <div class="layout-label">A</div>
-          </div>
-          <div class="layout-card">
-            <img src="${BASE_URL}${s.id}_B.png" alt="Layout B">
-            <div class="layout-label">B</div>
-          </div>
-          <div class="layout-card">
-            <img src="${BASE_URL}${s.id}_C.png" alt="Layout C">
-            <div class="layout-label">C</div>
-          </div>
-          <div class="layout-card">
-            <img src="${BASE_URL}${s.id}_D.png" alt="Layout D">
-            <div class="layout-label">D</div>
-          </div>
-        </div>
-
-        <!-- Q1: Overall Ranking -->
-        <div class="question">
-          <div class="question-text">Q1. Rank these layouts from best (1st) to worst (4th) — which room would you most want to live in?</div>
-          <div class="ranking-container">
-            <div class="rank-group">
-              <div class="rank-label">1st (Best)</div>
-              <select name="set${s.num}_rank1" class="rank-select" required>
-                <option value="">--</option>
-                <option value="A">A</option><option value="B">B</option>
-                <option value="C">C</option><option value="D">D</option>
-              </select>
-            </div>
-            <div class="rank-group">
-              <div class="rank-label">2nd</div>
-              <select name="set${s.num}_rank2" class="rank-select" required>
-                <option value="">--</option>
-                <option value="A">A</option><option value="B">B</option>
-                <option value="C">C</option><option value="D">D</option>
-              </select>
-            </div>
-            <div class="rank-group">
-              <div class="rank-label">3rd</div>
-              <select name="set${s.num}_rank3" class="rank-select" required>
-                <option value="">--</option>
-                <option value="A">A</option><option value="B">B</option>
-                <option value="C">C</option><option value="D">D</option>
-              </select>
-            </div>
-            <div class="rank-group">
-              <div class="rank-label">4th (Worst)</div>
-              <select name="set${s.num}_rank4" class="rank-select" required>
-                <option value="">--</option>
-                <option value="A">A</option><option value="B">B</option>
-                <option value="C">C</option><option value="D">D</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q2: Functional Preference -->
-        <div class="question">
-          <div class="question-text">Q2. Which layout makes it easiest to use the furniture? (e.g., clear pathways, desk near chair, bed accessible)</div>
-          <div class="radio-group">
-            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="A" required> A</label>
-            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="B"> B</label>
-            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="C"> C</label>
-            <label class="radio-option"><input type="radio" name="set${s.num}_func" value="D"> D</label>
-          </div>
-        </div>
-      </div>
-      `;
-      document.write(html);
-    });
-    </script>
-
-    <!-- Attention Check -->
-    <div class="attention-check">
-      <h3>⚠️ Attention Check</h3>
-      <p style="font-size: 13px; margin-bottom: 10px;">To verify you are paying attention, please select <strong>"C"</strong> below.</p>
-      <div class="radio-group">
-        <label class="radio-option"><input type="radio" name="attention" value="A" required> A</label>
-        <label class="radio-option"><input type="radio" name="attention" value="B"> B</label>
-        <label class="radio-option"><input type="radio" name="attention" value="C"> C</label>
-        <label class="radio-option"><input type="radio" name="attention" value="D"> D</label>
-      </div>
+  <!-- Thank you page -->
+  <div class="thank-you" id="thankYou">
+    <h2>&#127881; Thank you for participating!</h2>
+    <p>Your responses have been recorded successfully.</p>
+    <div class="completion-code">
+      <div style="font-size:13px;color:#555">Your Completion Code:</div>
+      <div class="code" id="completionCode">—</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Please copy this code for verification.</div>
     </div>
-
-    <!-- Optional Comment -->
-    <div class="question-set">
-      <div class="question-text" style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">
-        Any additional comments? (Optional)
-      </div>
-      <textarea name="comments" rows="3" style="width:100%; padding:8px; border:1px solid #dee2e6; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px;" placeholder="e.g., What factors did you consider when ranking?"></textarea>
-    </div>
-
-    <!-- Submit -->
-    <div class="submit-section">
-      <button type="submit" class="submit-btn" id="submitBtn">Submit Answers</button>
-    </div>
-  </form>
+    <button class="btn btn-next" onclick="downloadMyResponse()">&#128190; Download My Response (CSV)</button>
+  </div>
 </div>
 
 <script>
-// Validation: ensure no duplicate ranks within each set
-document.getElementById('surveyForm').addEventListener('submit', function(e) {
-  for (var s = 1; s <= 8; s++) {
-    var ranks = [];
-    for (var r = 1; r <= 4; r++) {
-      var val = document.querySelector('select[name="set' + s + '_rank' + r + '"]').value;
-      if (!val) { alert('Please complete all rankings for Set ' + s); e.preventDefault(); return; }
-      if (ranks.indexOf(val) !== -1) {
-        alert('Set ' + s + ': Each layout (A,B,C,D) must appear exactly once in the ranking. You have a duplicate: ' + val);
-        e.preventDefault(); return;
-      }
-      ranks.push(val);
+// ============================================================
+// CONFIGURATION — EDIT THESE
+// ============================================================
+
+// Image base URL: where your layout images are hosted
+// For GitHub Pages: "./images/" (if images are in the same repo)
+// For external hosting: "https://your-bucket.s3.amazonaws.com/images/"
+const IMAGE_BASE_URL = "./images/";
+
+// Google Apps Script Web App URL (for saving responses to Google Sheets)
+// Leave empty string "" to use local-only mode (download CSV manually)
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjnLz259mSj5RXxshhpZWpKixtNHpz3-liQBjOl9fZUDUEW1Xs-N1Q6JLI_YQrIJXs/exec";
+
+// ============================================================
+// SURVEY DATA
+// ============================================================
+const SETS = [
+  {num:1, id:"square_6", title:"Square Room — 6 Furniture Items", desc:"5m × 5m square room"},
+  {num:2, id:"square_8", title:"Square Room — 8 Furniture Items", desc:"5m × 5m square room"},
+  {num:3, id:"rectangle_6", title:"Rectangular Room — 6 Items", desc:"6.25m × 4m rectangular room"},
+  {num:4, id:"rectangle_8", title:"Rectangular Room — 8 Items", desc:"6.25m × 4m rectangular room"},
+  {num:5, id:"l_shape_6", title:"L-Shaped Room — 6 Items", desc:"L-shaped room (~25m²)"},
+  {num:6, id:"l_shape_8", title:"L-Shaped Room — 8 Items", desc:"L-shaped room (~25m²)"},
+  {num:7, id:"u_shape_6", title:"U-Shaped Room — 6 Items", desc:"U-shaped room (~25m²)"},
+  {num:8, id:"u_shape_8", title:"U-Shaped Room — 8 Items", desc:"U-shaped room (~25m²)"},
+];
+
+const TOTAL_PAGES = SETS.length + 1; // 8 sets + 1 attention/comment page
+let currentPage = 0;
+let participantId = '';
+let startTime = Date.now();
+let responseData = {};
+
+// Generate unique participant ID
+function genId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let id = 'P';
+  for (let i = 0; i < 6; i++) id += chars[Math.floor(Math.random() * chars.length)];
+  return id;
+}
+
+// ============================================================
+// BUILD SURVEY
+// ============================================================
+function buildSurvey() {
+  participantId = genId();
+  const container = document.getElementById('surveyPages');
+  let html = '';
+
+  // Pages 0-7: layout sets
+  SETS.forEach((s, idx) => {
+    html += `
+    <div class="question-set" id="page${idx}" ${idx===0?'style="display:block"':''}>
+      <div class="set-header">
+        <div class="set-number">${s.num}</div>
+        <div>
+          <div class="set-title">${s.title}</div>
+          <div class="set-desc">${s.desc}</div>
+        </div>
+      </div>
+      <div class="layouts-grid">
+        ${['A','B','C','D'].map(l => `
+        <div class="layout-card">
+          <img src="${IMAGE_BASE_URL}${s.id}_${l}.png" alt="Layout ${l}" loading="lazy">
+          <div class="layout-label">${l}</div>
+        </div>`).join('')}
+      </div>
+      <div class="question">
+        <div class="question-text">Q1. Rank these layouts from best (1st) to worst (4th) — which room would you most want to live in?</div>
+        <div class="ranking-container">
+          ${[['1st (Best)','rank1'],['2nd','rank2'],['3rd','rank3'],['4th (Worst)','rank4']].map(([label,name]) => `
+          <div class="rank-group">
+            <div class="rank-label">${label}</div>
+            <select class="rank-select" data-field="set${s.num}_${name}">
+              <option value="">--</option>
+              <option value="A">A</option><option value="B">B</option>
+              <option value="C">C</option><option value="D">D</option>
+            </select>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="question">
+        <div class="question-text">Q2. Which layout makes it easiest to use the furniture? (e.g., clear pathways, desk near chair, bed accessible)</div>
+        <div class="radio-group">
+          ${['A','B','C','D'].map(l => `
+          <label class="radio-option" onclick="this.querySelector('input').checked=true;selectRadio(this)">
+            <input type="radio" name="set${s.num}_func" data-field="set${s.num}_func" value="${l}"> ${l}
+          </label>`).join('')}
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-prev" onclick="goPage(${idx-1})" ${idx===0?'disabled':''}>← Previous</button>
+        <button class="btn btn-next" onclick="goPage(${idx+1})">Next →</button>
+      </div>
+    </div>`;
+  });
+
+  // Page 8: Attention check + comments + submit
+  html += `
+  <div class="question-set" id="page8">
+    <div class="attention-check">
+      <h3>&#9888; Attention Check</h3>
+      <p style="font-size:13px;margin-bottom:10px">To verify you are paying attention, please select <strong>"C"</strong> below.</p>
+      <div class="radio-group">
+        ${['A','B','C','D'].map(l => `
+        <label class="radio-option" onclick="this.querySelector('input').checked=true;selectRadio(this)">
+          <input type="radio" name="attention" data-field="attention" value="${l}"> ${l}
+        </label>`).join('')}
+      </div>
+    </div>
+    <div class="question">
+      <div class="question-text">Any additional comments? (Optional)</div>
+      <textarea data-field="comments" rows="3" style="width:100%;padding:10px;border:2px solid #dee2e6;border-radius:8px;font-family:'Inter';font-size:13px;resize:vertical" placeholder="e.g., What factors did you consider when ranking?"></textarea>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-prev" onclick="goPage(7)">← Previous</button>
+      <button class="btn btn-submit" onclick="submitSurvey()">Submit Answers &#10003;</button>
+    </div>
+  </div>`;
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function selectRadio(el) {
+  el.closest('.radio-group').querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function goPage(idx) {
+  if (idx < 0 || idx >= TOTAL_PAGES) return;
+
+  // Validate current page before advancing
+  if (idx > currentPage && currentPage < 8) {
+    const pageEl = document.getElementById('page' + currentPage);
+    const s = SETS[currentPage];
+    // Check rankings
+    const ranks = [];
+    for (let r = 1; r <= 4; r++) {
+      const sel = pageEl.querySelector(`[data-field="set${s.num}_rank${r}"]`);
+      if (!sel.value) { alert(`Please complete all rankings for Set ${s.num}.`); return; }
+      if (ranks.includes(sel.value)) { alert(`Set ${s.num}: Each layout must appear exactly once. Duplicate: ${sel.value}`); return; }
+      ranks.push(sel.value);
+    }
+    // Check functional
+    const func = pageEl.querySelector(`input[name="set${s.num}_func"]:checked`);
+    if (!func) { alert(`Please select your functional preference for Set ${s.num}.`); return; }
+  }
+
+  // Hide current, show target
+  document.getElementById('page' + currentPage).style.display = 'none';
+  document.getElementById('page' + idx).style.display = 'block';
+  currentPage = idx;
+
+  // Update progress
+  const pct = Math.round(((currentPage + 1) / TOTAL_PAGES) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `Question ${currentPage + 1} / ${TOTAL_PAGES}`;
+
+  // Show/hide instructions
+  document.getElementById('instructionsBox').style.display = currentPage === 0 ? 'block' : 'none';
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function collectData() {
+  const data = {
+    participant_id: participantId,
+    timestamp: new Date().toISOString(),
+    duration_seconds: Math.round((Date.now() - startTime) / 1000),
+    user_agent: navigator.userAgent.substring(0, 100),
+  };
+  // Collect all fields
+  document.querySelectorAll('[data-field]').forEach(el => {
+    const field = el.dataset.field;
+    if (el.type === 'radio') {
+      if (el.checked) data[field] = el.value;
+    } else if (el.tagName === 'SELECT') {
+      data[field] = el.value;
+    } else if (el.tagName === 'TEXTAREA') {
+      data[field] = el.value;
+    }
+  });
+  return data;
+}
+
+async function submitSurvey() {
+  // Validate attention check
+  const att = document.querySelector('input[name="attention"]:checked');
+  if (!att) { alert('Please complete the attention check.'); return; }
+  if (att.value !== 'C') { alert('Please re-read the attention check question carefully.'); return; }
+
+  responseData = collectData();
+  const statusEl = document.getElementById('statusMsg');
+
+  // Try sending to Google Sheets
+  if (GOOGLE_SCRIPT_URL) {
+    statusEl.className = 'status';
+    statusEl.textContent = 'Submitting...';
+    statusEl.style.display = 'block';
+
+    try {
+      const resp = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(responseData),
+      });
+      statusEl.className = 'status success';
+      statusEl.textContent = 'Response saved to server!';
+    } catch (err) {
+      statusEl.className = 'status error';
+      statusEl.textContent = 'Server save failed. Your response is saved locally — please download CSV below.';
+      console.error(err);
     }
   }
-  // Attention check
-  var att = document.querySelector('input[name="attention"]:checked');
-  if (!att || att.value !== 'C') {
-    alert('Please check the attention question again.');
-    e.preventDefault(); return;
+
+  // Save to localStorage as backup
+  const stored = JSON.parse(localStorage.getItem('oidppo_responses') || '[]');
+  stored.push(responseData);
+  localStorage.setItem('oidppo_responses', JSON.stringify(stored));
+
+  // Generate completion code
+  const code = participantId + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+  document.getElementById('completionCode').textContent = code;
+
+  // Show thank you
+  document.querySelectorAll('.question-set').forEach(el => el.style.display = 'none');
+  document.getElementById('instructionsBox').style.display = 'none';
+  document.getElementById('legendBox').style.display = 'none';
+  document.getElementById('progressText').textContent = 'Complete!';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('thankYou').style.display = 'block';
+  statusEl.style.display = 'none';
+}
+
+// ============================================================
+// CSV DOWNLOAD
+// ============================================================
+function downloadMyResponse() {
+  const data = responseData;
+  const headers = Object.keys(data);
+  const values = headers.map(h => {
+    let v = String(data[h] || '');
+    if (v.includes(',') || v.includes('"') || v.includes('\n')) v = '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  });
+  const csv = headers.join(',') + '\n' + values.join(',') + '\n';
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `response_${participantId}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// ADMIN: Download all local responses
+// ============================================================
+function downloadAllLocal() {
+  const stored = JSON.parse(localStorage.getItem('oidppo_responses') || '[]');
+  if (!stored.length) { alert('No local responses found.'); return; }
+  const allKeys = new Set();
+  stored.forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
+  const headers = Array.from(allKeys);
+  let csv = headers.join(',') + '\n';
+  stored.forEach(r => {
+    csv += headers.map(h => {
+      let v = String(r[h] || '');
+      if (v.includes(',') || v.includes('"') || v.includes('\n')) v = '"' + v.replace(/"/g, '""') + '"';
+      return v;
+    }).join(',') + '\n';
+  });
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `all_responses_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Admin shortcut: Ctrl+Shift+D = download all local responses
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+    e.preventDefault();
+    downloadAllLocal();
   }
 });
+
+// ============================================================
+// INIT
+// ============================================================
+buildSurvey();
 </script>
+</body>
+</html>
