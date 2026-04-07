@@ -1,0 +1,58 @@
+[
+  {
+    "set_id": "square_6",
+    "label_A": "sac",
+    "label_B": "mh",
+    "label_C": "oidppo",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "square_8",
+    "label_A": "oidppo",
+    "label_B": "rlss",
+    "label_C": "sac",
+    "label_D": "mh"
+  },
+  {
+    "set_id": "rectangle_6",
+    "label_A": "mh",
+    "label_B": "sac",
+    "label_C": "oidppo",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "rectangle_8",
+    "label_A": "mh",
+    "label_B": "sac",
+    "label_C": "oidppo",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "l_shape_6",
+    "label_A": "rlss",
+    "label_B": "oidppo",
+    "label_C": "sac",
+    "label_D": "mh"
+  },
+  {
+    "set_id": "l_shape_8",
+    "label_A": "oidppo",
+    "label_B": "sac",
+    "label_C": "mh",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "u_shape_6",
+    "label_A": "oidppo",
+    "label_B": "mh",
+    "label_C": "sac",
+    "label_D": "rlss"
+  },
+  {
+    "set_id": "u_shape_8",
+    "label_A": "rlss",
+    "label_B": "sac",
+    "label_C": "oidppo",
+    "label_D": "mh"
+  }
+]
